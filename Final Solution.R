@@ -143,7 +143,7 @@ view(tripend)
 #Friday: 8AM - 9AM has 6587 trips
 
 
-#Q5. Determine the 10 most frequent starting stations and ending stations during the rush hours you established. 
+#Task 5. Determine the 10 most frequent starting stations and ending stations during the rush hours you established. 
 #Each number of counts per hour are shown in this new data frame, so the rush hours are as follows:
 #Monday: 8AM - 9AM has 8219 trips 
 #Tuesday: 8AM - 9AM has 8902 trips
@@ -173,7 +173,7 @@ my_trip_copy <- trip.clean %>%
 top_10_start_stations <- sort(table(my_trip_copy$start_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) starting stations during rush hours on weekdays
 top_10_end_stations <- sort(table(my_trip_copy$end_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) ending stations during rush hours on weekdays
 
-#Q6. Determine the 10 most frequent starting stations and ending stations during the weekends. (more sophisticated method than Q5 but same goal)
+#Task 6. Determine the 10 most frequent starting stations and ending stations during the weekends. (more sophisticated method than Q5 but same goal)
 #Convert start_date and end_date columns into appropriate formats
 trip_copy <- trip.clean %>%
   mutate(start_date = as.POSIXct(start_date, format = "%m/%d/%Y %H:%M")) %>%
@@ -224,7 +224,7 @@ station_names_ordered2 <- arrange(station_names, desc(station_names$end_station_
 # Obtain the 10 most frequent ending stations
 most_freq_end <- station_names_ordered2$station.name[1:10]
 
-#Q7. Calculate the average utilization of bikes for each month (total time(duration) used/total time in month).
+#Task 7. Calculate the average utilization of bikes for each month (total time(duration) used/total time in month).
 #(total duration used in month/total number of times in month)
 
 #Use original trip data, remove outliers and change dates into appropriate formats 
@@ -297,7 +297,7 @@ merged_table <- merged_table %>%
             total_number_of_times = sum(total_number_of_times, na.rm = T), #Calculates the total number of time bikes were used in a month
             average_utilization_per_month = floor(utilization_per_month / total_number_of_times)) #Calculates the average utilization in each month
 
-#Q8
+#Task 8
 library(corrplot)
 trip_for_weather <- trip.clean %>% 
   mutate(start_city = station$city[match(trip.clean$start_station_id, station$id)]) %>% #Finding cities for the starting stations 
