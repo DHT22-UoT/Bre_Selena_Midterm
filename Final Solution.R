@@ -56,7 +56,7 @@ weather.eda <- function(weather)
   plot_num(weather)
   describe(weather)
 }
-weather.eda(trip)
+weather.eda(weather)
 
 #Task 2: Remove any trips that are considered cancelled 
 trip.clean <- trip %>%
