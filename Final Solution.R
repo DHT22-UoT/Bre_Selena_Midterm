@@ -46,7 +46,7 @@ Trip.eda <- function(trip)
 }
 Trip.eda(trip)
 
-#EDA fordata set:
+#EDA for data set:
 weather.eda <- function(weather)
 {
   glimpse(weather)
@@ -56,7 +56,7 @@ weather.eda <- function(weather)
   plot_num(weather)
   describe(weather)
 }
-weather.eda(trip)
+weather.eda(weather)
 
 #Task 2: Remove any trips that are considered cancelled 
 trip.clean <- trip %>%
