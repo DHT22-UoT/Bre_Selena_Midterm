@@ -1,13 +1,9 @@
 ---
-title: "breannas.markup"
+title: "Breannas.markup"
 author: "BV"
 date: "2022-07-28"
 output: html_document
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
 
 
 Data from the Bay Area Bike Operations was collected over 12 months in the year 2014. Information about the bike trips, weather, and bike stations were collected and organized into three separate data frames. All figures throughout this report can be referred to in the Appendix section.
@@ -15,17 +11,20 @@ Data from the Bay Area Bike Operations was collected over 12 months in the year 
 # Preliminary Data
 
 
-```{r variable_assignments, include=TRUE}
+```{r setting.library, results='hide'}
 library(readr)
 library(dplyr)
 library(tidyr)
+```
+
+```{r importing.datasets, results='hide'}
 trip <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/trip.csv")
 weather <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/weather.csv")
 station <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/station.csv")
 ```
 
 
-```{r data manipulation, include=FALSE}
+```{r data manipulation, results='hide'}
 #Assign the station names to a variable
 station_names <- data.frame(station$name)
 #Create 2 columns, all zeros, for the starting counts (0's) to assist later counting the starting and ending stations
@@ -107,7 +106,7 @@ table2
 Any trips with a duration of less than 2 minutes (120 seconds) were considered as a canceled trip and were removed from the trips data set. This removed 2499 observations from the trips data set. An extremely large value of 17270400 was observed in the durations column in the trips data set which was significantly larger than the rest of the values in the column leading to the removal of this specific value. To remove any outliers from the weather data set, any values within any numeric columns that were not within 99.9% of the data range were removed. This led to the removal of 522 observations from the weather data set.
 
 
-```{r Removing_Outliers}
+```{r Removing_Outliers, results='hide'}
 #Task 2: Remove any trips that are considered cancelled 
 trip.clean <- trip %>%
   filter(!duration < 120) %>% #120s = 2mins which are cancelled trips 
@@ -155,7 +154,7 @@ weather <- weather %>%
 After cleaning the data frames, rush hours during the weekdays were found where the trip volume was the highest at the starting and ending stations. The peak hours can be observed in Table 1.0. Weekdays with peak hours for highest trip volume. 
 
 
-```{r Weekday_Rush_Hours}
+```{r Weekday_Rush_Hours, results='hide'}
 #Task 4:
 #Find the highest volume of hours on weekdays; find the hours of weekdays where the trip volume is highest:
 library(lubridate)
@@ -311,7 +310,7 @@ most_freq_end <- station_names_ordered2$station.name[1:10]
 
 ## Table 1.2 Ten most frequent starting and ending stations during the weekends
 
-```{R Table 1.2}
+```{R Table 1.2, echo=FALSE}
 ranking2 <- c(1,2,3,4,5,6,7,8,9,10)
 start.station.name2 <- c("Harry Bridges Plaza (Ferry Building)", "Embarcadero at Sansome", "Market at 4th", "Embarcadero at Bryant", "2nd at Townsend", "Powell Street BART", "San Francisco Caltrain (Townsend at 4th)", "Grant Avenue at Columbus Avenue", "Powell at Post (Union Square)", "Market at Sansome")
 start.station.frq2 <- c(3169,3128,1661,1591,1546,1488,1365,1299,1091,1091)
@@ -417,7 +416,7 @@ table1.3
 To investigate on whether the weather conditions have an impact on the bike rental patterns, weather variables such as temperature, wind speed, gust speed, cloud cover, visibility were used to create a correlation matrix with the duration of bike rental trips, which can be seen in Figure 4. The highest correlations should be in dark blue or dark red colours. The matrix was created from the new dataset combining trip data with the weather data using the “city” and “date” columns. The correlation coefficients between duration and the weather variables can be seen in Table 1.4. The correlation coefficients were all close to zero in Table 1.4, and they were all transparent in Figure 4, which indicates that there was no correlation between bike rental duration and the weather variables.
 
 
-```{r Correlation Coefficients}
+```{r Correlation Coefficients, results='hide'}
 #Q8
 library(corrplot)
 trip_for_weather <- trip.clean %>% 
