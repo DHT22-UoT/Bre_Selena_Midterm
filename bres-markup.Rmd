@@ -9,23 +9,24 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+
 Data from the Bay Area Bike Operations was collected over 12 months in the year 2014. Information about the bike trips, weather, and bike stations were collected and organized into three separate data frames. All figures throughout this report can be referred to in the Appendix section.
 
 # Preliminary Data
 
 
-```{r variable_assignments, eval=FALSE, include=TRUE}
+```{r variable_assignments, include=TRUE}
 library(readr)
 library(dplyr)
 library(tidyr)
-trip <- read_csv("~/Desktop/trip.csv")
-weather <- read_csv("~/Desktop/weather.csv")
-station <- read_csv("~/Desktop/station.csv")
+trip <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/trip.csv")
+weather <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/weather.csv")
+station <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/station.csv")
 ```
 
 
 ```{r data manipulation, include=FALSE}
-
+#Assign the station names to a variable
 station_names <- data.frame(station$name)
 #Create 2 columns, all zeros, for the starting counts (0's) to assist later counting the starting and ending stations
 name_count_start <- rep(0, times = nrow(station_names))
@@ -36,3 +37,333 @@ name_col <- station_names$station.name
 station_names$start_station_count <- name_count_start
 station_names$end_station_count <- name_count_end
 ```
+
+
+## Exploratory Data Analysis 
+
+An exploratory data analysis of both the trips data set and weather data set were completed. The most frequently used starting and ending station is the San Francisco Caltrain station. The following most frequently used stations can be viewed in Figure 1 and 2. Descriptive statistics were viewed for numeric variables within the trips data set. Descriptions of the duration of customers and subscribers trips can be found in Table 1.
+
+```{r EDA, eval=FALSE, include=TRUE}
+#Task 1: Perform an EDA for the weather and trips data set 
+#Attach proper packages needed for an exploratory data analysis
+library(funModeling)
+library(tidyverse)
+library(Hmisc)
+
+Trip.eda <- function(trip)
+{
+  glimpse(trip)
+  print(status(trip))
+  freq(trip) 
+  print(profiling_num(trip))
+  plot_num(trip)
+  describe(trip)
+}
+Trip.eda(trip)
+
+#EDA fordata set:
+weather.eda <- function(weather)
+{
+  glimpse(weather)
+  print(status(weather))
+  freq(weather) 
+  print(profiling_num(weather))
+  plot_num(weather)
+  describe(weather)
+}
+weather.eda(weather)
+```
+
+
+The amount of precipitation for each event can be viewed in Figure 3. No precipitation occurred for 1542 trips out of the entire data set. Descriptive statistics of all numerical variables in the weather data set can be found in Table 2. 
+
+## Outliers 
+
+
+Any trips with a duration of less than 2 minutes (120 seconds) were considered as a canceled trip and were removed from the trips data set. This removed 2499 observations from the trips data set. An extremely large value of 17270400 was observed in the durations column in the trips data set which was significantly larger than the rest of the values in the column leading to the removal of this specific value. To remove any outliers from the weather data set, any values within any numeric columns that were not within 99.9% of the data range were removed. This led to the removal of 522 observations from the weather data set.
+
+
+```{r Removing_Outliers}
+#Task 2: Remove any trips that are considered cancelled 
+trip.clean <- trip %>%
+  filter(!duration < 120) %>% #120s = 2mins which are cancelled trips 
+  filter(duration < 17270400) #Task 3 - Identifying any outliers in the trip data set:
+#One extremely large value in the duration column that needs to be removed 
+
+#Task 3:
+#Identifying any outliers in the weather data set:
+#Method: Remove all values that are over the 99.9% range 
+#Check which values within each variable are over the 99.9% interval
+quantile(weather$max_temperature_f,probs=c(.0,.999))
+quantile(weather$mean_temperature_f,probs=c(.0,.999))
+quantile(weather$min_temperature_f,probs=c(.0,.999))
+quantile(weather$max_visibility_miles,probs=c(.0,.999), na.rm = T)
+quantile(weather$mean_visibility_miles,probs=c(.0,.999), na.rm = T)
+quantile(weather$min_visibility_miles,probs=c(.0,.999), na.rm = T)
+quantile(weather$max_wind_Speed_mph,probs=c(.0,.999), na.rm = T)
+quantile(weather$mean_wind_speed_mph,probs=c(.0,.999))
+quantile(weather$max_gust_speed_mph,probs=c(.0,.999), na.rm = T)
+quantile(weather$cloud_cover,probs=c(.0,.999))
+#Convert T values to 0 in PrecipitationIn column
+as.numeric(weather$precipitation_inches)
+weather$precipitation_inches <- stringr::str_replace(weather$precipitation_inches, "T", "0")
+weather$precipitation_inches <- as.numeric(weather$precipitation_inches)
+quantile(weather$precipitation_inches,probs=c(.0,.999), na.rm = T) 
+
+#Remove the values that are over the 99% interval 
+weather <- weather %>%
+  filter(max_temperature_f < 95) %>%
+  filter(mean_temperature_f < 79) %>% 
+  filter(min_temperature_f < 68) %>%
+  filter(max_visibility_miles < 20) %>%
+  filter(mean_visibility_miles < 20) %>%
+  filter(min_visibility_miles < 20) %>%
+  filter(max_wind_Speed_mph < 115) %>%
+  filter(mean_wind_speed_mph < 18) %>% 
+  filter(max_gust_speed_mph < 114) %>%
+  filter(precipitation_inches < 1.38) %>%
+  filter(cloud_cover < 8)
+```
+
+
+# Findings 
+
+After cleaning the data frames, rush hours during the weekdays were found where the trip volume was the highest at the starting and ending stations. The peak hours can be observed in Table 1.0. Weekdays with peak hours for highest trip volume. 
+
+```{r Weekday_Rush_Hours}
+#Task 4:
+#Find the highest volume of hours on weekdays; find the hours of weekdays where the trip volume is highest:
+library(lubridate)
+#Change the type for start and end date from character to date and time
+trip.clean$start_date <- mdy_hm(trip.clean$start_date)
+trip.clean$end_date <- mdy_hm(trip.clean$end_date)
+class(trip.clean$start_date) #Check to make sure the type switched properly 
+class(trip.clean$end_date)
+
+#Make 2 new columns separating the date and times 
+trip.clean$start.date <- as.Date(trip.clean$start_date)
+trip.clean$start.time <- format(trip.clean$start_date,"%H")
+trip.clean$end.date <- as.Date(trip.clean$end_date)
+trip.clean$end.time <- format(trip.clean$end_date,"%H")
+
+#Filter the date column so that only weekdays are shown
+library(chron)
+tripstart <- trip.clean %>%
+  mutate(weekday = wday(start.date, label = TRUE)) %>%
+  filter(weekday == "Mon" | weekday == "Tue" | weekday == "Wed" | weekday == "Thu" | weekday == "Fri") %>%
+  group_by(weekday, start.time) %>%
+  summarise(cnt=n())
+
+tripstart #Each number of counts per hour are shown in this new data frame, so the rush hours are as follows:
+#Monday: 8AM - 9AM has 8162 trips 
+#Tuesday: 8AM - 9AM has 8849 trips
+#Wednesday: 8AM - 9AM has 8440 trips
+#Thursday: 8AM -9AM has 7968 trips
+#Friday: 8AM - 9AM has 6939 trips
+
+#Peak hours for end stations 
+tripend <- trip.clean %>%
+  mutate(weekday = wday(end.date, label = TRUE)) %>%
+  filter(weekday == "Mon" | weekday == "Tue" | weekday == "Wed" | weekday == "Thu" | weekday == "Fri") %>%
+  group_by(weekday, end.time) %>%
+  summarise(cnt=n())
+tripend
+
+#Monday: 5PM - 6PM has 7920 trips 
+#Tuesday: 8AM - 9AM has 8271 trips
+#Wednesday: 8AM - 9AM has 8076 trips
+#Thursday: 8AM -9AM has 7474 trips
+#Friday: 8AM - 9AM has 6587 trips
+```
+
+
+
+Next, the 10 most frequent starting and ending stations during these rush hours can be found in Table 1.1. The stations were found by first keeping the trip data where the starting and ending days were weekdays, and then finding the starting and ending station names for the corresponding rush hours demonstrated in Table 1.0. Then, the starting and ending station names are put into individual tables and sorted according to their frequencies in a descending order. Lastly, the first 10 station names in the ordered table along with their frequencies were found and used to compute Table 1.1. The starting and ending stations with the highest frequencies during the rush hours on weekdays were San Francisco Caltrain (Townsend at 4th) and San Francisco Caltrain (Townsend at 4th), respectively.
+
+
+```{R 10 most frq}
+#Q5. Determine the 10 most frequent starting stations and ending stations during the rush hours you established. 
+#Convert start_date and end_date columns into appropriate formats
+my_trip_copy <- trip.clean %>%
+  mutate(start_date = as.POSIXct(start_date, format = "%m/%d/%Y %H:%M")) %>%
+  mutate(end_date = as.POSIXct(end_date, format = "%m/%d/%Y %H:%M")) %>%
+  mutate(start_hr = hour(start_date)) %>% #Obtain the starting date hours
+  mutate(end_hr = hour(end_date)) %>% #Obtain the ending date hours
+  mutate(start_day = lubridate::wday(start_date, label = T)) %>% #Get the day in a week of starting day
+  mutate(end_day = lubridate::wday(end_date, label = T)) %>% #Get the day in a week of ending day
+  filter(start_day == "Mon" | start_day == "Tue" | start_day == "Wed" | start_day == "Thu" | start_day == "Fri" |
+           end_day == "Mon" | end_day == "Tue" | end_day == "Wed" | end_day == "Thu" | end_day == "Fri") %>% #Keeping data where the starting and ending days are weekdays
+  mutate(start_stations_rush = ifelse(start_hr == 8, start_station_name, NA)) %>% #Obtain starting stations during rush hours on weekdays
+  mutate(end_stations_rush = ifelse(((end_hr == 17 & end_day == "Mon") | (end_hr == 8 & end_day != "Mon")), end_station_name, NA))#Obtain ending stations during rush hours on weekdays
+
+top_10_start_stations <- sort(table(my_trip_copy$start_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) starting stations during rush hours on weekdays
+top_10_end_stations <- sort(table(my_trip_copy$end_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) ending stations during rush hours on weekdays
+```
+
+
+The 10 most frequent starting and ending stations during the weekend can be found in Table 1.2. These stations were found by a similar method as the one for Table 1.1, but more sophisticated and less efficient. This is done by first keeping the trip data where the starting and ending days were weekends. Then, a copy of the station data with only the station name column was made. Two more columns were added to the copy, with each counting the number of times each starting and ending stations were used, respectively. Another copy of the station names was also made for looping. 
+A nested for loop was used to iterate through the copy of station names and the starting or ending station names. The corresponding frequency in the frequency column of the station data copy incremented by 1 when the starting or ending station name from the trip data matched with the current station name. Then, the copy of station data was first ordered in a descending order according to the frequency of the starting stations. The first 10 stations were the 10 most frequent starting stations during the weekend. Then, the copy of station data was ordered in a descending order according to the frequency of the ending stations. The first 10 stations were the 10 most frequent ending stations during the weekend. These station names along with their frequencies can be found in Table 1.2. The starting and ending stations with the highest frequencies during the weekends were Harry Bridges Plaza (Ferry Building) and Embarcadero at Sansome, respectively.
+
+
+```{R 10 most frq weekends}
+#Q6. Determine the 10 most frequent starting stations and ending stations during the weekends. (more sophisticated method than Q5 but same goal)
+#Convert start_date and end_date columns into appropriate formats
+trip_copy <- trip.clean %>%
+  mutate(start_date = as.POSIXct(start_date, format = "%m/%d/%Y %H:%M")) %>%
+  mutate(end_date = as.POSIXct(end_date, format = "%m/%d/%Y %H:%M"))
+
+#Find weekends in start_date, then use filter to extract those rows
+trip_copy <- trip_copy %>%
+  filter(lubridate::wday(trip_copy$start_date) %in% c(1, 7)) #Find weekends in start_date; 1 and 7 represent Sunday and Saturday, repectively.
+
+#Obtain the starting station names in the trip.csv file
+start_station_names <- trip_copy$start_station_name
+
+#Count the number of times each starting station was used based on the trip.csv data 
+# and store the counts in the start_station_count column in station_names
+for (name in name_col) {
+  for (i in seq_along(start_station_names)) {
+    if (name == start_station_names[i]) {
+      station_names$start_station_count[station_names$station.name == name] <- 
+        station_names$start_station_count[station_names$station.name == name] + 1
+    }
+  }
+}
+
+#Find weekends in end_date, then use filter to extract those rows
+trip_copy <- trip_copy %>%
+  filter(lubridate::wday(trip_copy$end_date) %in% c(1, 7)) #Find weekends in end_date; 1 and 7 represent Sunday and Saturday, repectively.
+
+#Obtain the ending station names in the trip.csv file
+end_station_names <- trip_copy$end_station_name
+
+#Count the number of times each ending station was used based on the trip.csv data 
+# and store the counts in the end_station_count column in station_names
+for (name2 in name_col) {
+  for (j in seq_along(end_station_names)) {
+    if (name2 == end_station_names[j]) {
+      station_names$end_station_count[station_names$station.name == name2] <- 
+        station_names$end_station_count[station_names$station.name == name2] + 1
+    }
+  }
+}
+
+#arrange station_names in descending order according to start_station_count
+station_names_ordered <- arrange(station_names, desc(station_names$start_station_count))
+#Obtain the 10 most frequent starting stations
+most_freq_start <- station_names_ordered$station.name[1:10]
+
+station_names_ordered2 <- arrange(station_names, desc(station_names$end_station_count))
+# Obtain the 10 most frequent ending stations
+most_freq_end <- station_names_ordered2$station.name[1:10]
+```
+
+
+The average utilization of bikes for each month can be found in Table 1.3. It should be noted that there were two assumptions made. One of them was that the average utilization of bikes for each month was interpreted as the total time(duration) used/total time (total number of times bikes were used) in month, so it means the average duration in seconds per bike rental in a month. The second one was that when the starting and ending months were not equal, the number of times the bikes were used was one in both the starting and ending months. 
+First, the total utilization (duration) of bikes and the number of times bikes were used for each month, where the starting and ending months were equal, were found. The dataset analysis was separated according to whether the starting and ending months were equal or not, because if the starting and ending months were not equal, the duration needed to be divided into the corresponding months. 
+Then, for the part of the dataset where the starting and ending months did not equal, the total time in seconds from the starting date (time) to the end of the staring month was found. This number was stored into a new column. Then, the number was subtracted from duration, and the result was put into another new column. The duration only needed to be divided into two components because the maximum difference between starting and ending months was one. Two subsets of the dataset were created. Each of them contained only the utilization and the number of times bikes were used for adding to the starting or ending months, respectively. 
+The two subsets were merged with the table containing only the equal starting and ending months data, and then the utilization and number of times bikes were used in each month were summed accordingly. The total utilization in each month was divided by the corresponding number of times bikes were used to obtain the average utilization of bikes for each month. The results can be found in Table 1.3. December had the highest average utilization of bikes.
+
+
+```{r Avg month use}
+#Q7. Calculate the average utilization of bikes for each month (total time(duration) used/total time in month).
+#(total duration used in month/total number of times in month)
+
+#Use original trip data, remove outliers and change dates into appropriate formats 
+#Convert start_date and end_date columns into appropriate formats
+trip_copy2 <- trip.clean %>%
+  mutate(start_date = as.POSIXct(start_date, format = "%m/%d/%Y %H:%M")) %>%
+  mutate(end_date = as.POSIXct(end_date, format = "%m/%d/%Y %H:%M"))
+
+#trip_copy3 contains total utilization (duration) for starting-date month == ending-date month for each month, and the number of times the bikes were used in each month
+trip_copy3 <- trip_copy2 %>%
+  mutate(start_month = lubridate::month(start_date)) %>% #Find each month using lubridate, put month numbers into a new column (one for start, one for end)
+  mutate(end_month = lubridate::month(end_date)) %>%
+  mutate(number_of_times = 1) %>% #Count the number of times bikes were used in a month
+  group_by(start_month) %>%
+  filter(start_month == end_month) %>% 
+  summarise(utilization_per_month = sum(duration, na.rm = T), #Counting utilization in each month for when starting-date month == ending-date month
+            total_number_of_times = sum(number_of_times, na.rm = T)) #Total number of times bikes were used in each month
+
+months_not_matching <- trip_copy2 %>% #Using data where the starting and ending months do not match
+  mutate(start_month = lubridate::month(start_date)) %>% #Find each month using lubridate, put month numbers into a new column (one for start, one for end)
+  mutate(end_month = lubridate::month(end_date)) %>%
+  mutate(number_of_times = 1) %>% #Count the number of times bikes were used in a month
+  group_by(start_month) %>%
+  filter(start_month != end_month)
+
+months_not_matching$utilization_prev <- rep(0, nrow(months_not_matching)) #For dividing duration into utilization in the starting-date month
+months_not_matching$utilization_next <- months_not_matching$utilization_prev #For dividing duration into utilization in the ending-date month
+months_not_matching$times_next <- months_not_matching$utilization_prev #need to add the number of times bikes were used twice, because the bike was used once in each month, e.g. if a trip starts 
+#in January and ends in Feb, the number of times it is used in Jan is 1, and the number of times it is used in Feb is 1
+#Maximum difference between start and end months is 1, so we only need to divide duration into two months
+
+for (start_index in seq(1:nrow(months_not_matching))) {
+  end_of_month <- round_date(months_not_matching$start_date[start_index], "month") #Finding date for the end of the starting month
+  months_not_matching$utilization_prev[start_index] <- 
+    difftime(end_of_month, months_not_matching$start_date[start_index], units = "secs")  #Duration or utilization in the starting month
+  months_not_matching$utilization_next[start_index] <- months_not_matching$duration[start_index] - months_not_matching$utilization_prev[start_index] #Duration or utilization in the ending month
+  if (months_not_matching$utilization_next[start_index] > 0) {
+    months_not_matching$times_next[start_index] <- months_not_matching$times_next[start_index] + 1 #if the bikes were used in the ending month, the number of times the bikes were used increases by 1 because it is also used in the ending month
+  }
+}
+
+start_months_add <-  months_not_matching %>% #The divided utilization and number of times to be added to the starting months
+  arrange(start_month) %>% #arrange table in ascending order according to start_month
+  group_by(start_month) %>%
+  summarise(utilization_per_month = sum(utilization_prev, na.rm = T), 
+            total_number_of_times = sum(number_of_times, na.rm = T))
+
+add_to_start <- data.frame(12, 0, 0) #A row to be added to start_months_add because the starting months do not include December. Therefore, when I merge the tables (adding utilizations and number of times) together, the numbers could match. 
+names(add_to_start) <- c("start_month","utilization_per_month", "total_number_of_times") #The matching column names allow us to merge the tables later using rbind
+start_months_add <- rbind(start_months_add, add_to_start) #Adds the row
+names(start_months_add) <- c("month", "utilization_per_month", "total_number_of_times") #so we can use rbind later to combine the values (since the columns such as month would match with month, etc)
+
+end_months_add <-  months_not_matching #The divided utilization and number of times to be added to the ending months
+add_to_end <- data.frame(1, 0, 0) #A row to be added to end_months_add because the ending months do not include January. Therefore, when I merge the tables (adding utilizations and number of times) together, the numbers could match. 
+names(add_to_end)<-c("end_month","utilization_next", "total_number_of_times") #The matching column names allow us to merge the tables later using rbind
+end_months_add <- rbind(end_months_add, add_to_end) #Adds the row
+
+end_months_add <- end_months_add %>%
+  arrange(end_month) %>% #arrange table in ascending order according to end_month
+  group_by(end_month) %>%
+  summarise(utilization_per_month = sum(utilization_next, na.rm = T), #summing utilization per month
+            total_number_of_times = sum(c(number_of_times, times_next), na.rm = T)) #summing number of times per month
+
+names(end_months_add) <- c("month", "utilization_per_month", "total_number_of_times") #so we can use rbind later to combine the values
+names(trip_copy3) <- c("month", "utilization_per_month", "total_number_of_times") #The matching column names allow us to merge the tables later using rbind
+merged_table <- rbind(start_months_add, end_months_add, trip_copy3) #Merging the three tables that include utilization and number of times per month 
+merged_table <- merged_table %>%
+  group_by(month) %>%
+  summarise(utilization_per_month = sum(utilization_per_month, na.rm = T), #Calculates the total time used in a month (utilization)
+            total_number_of_times = sum(total_number_of_times, na.rm = T), #Calculates the total number of time bikes were used in a month
+            average_utilization_per_month = floor(utilization_per_month / total_number_of_times)) #Calculates the average utilization in each month
+```
+
+
+To investigate on whether the weather conditions have an impact on the bike rental patterns, weather variables such as temperature, wind speed, gust speed, cloud cover, visibility were used to create a correlation matrix with the duration of bike rental trips, which can be seen in Figure 4. The highest correlations should be in dark blue or dark red colours. The matrix was created from the new dataset combining trip data with the weather data using the “city” and “date” columns. The correlation coefficients between duration and the weather variables can be seen in Table 1.4. The correlation coefficients were all close to zero in Table 1.4, and they were all transparent in Figure 4, which indicates that there was no correlation between bike rental duration and the weather variables.
+
+
+```{r Correlation Coefficients}
+#Q8
+library(corrplot)
+trip_for_weather <- trip.clean %>% 
+  mutate(start_city = station$city[match(trip.clean$start_station_id, station$id)]) %>% #Finding cities for the starting stations 
+  mutate(start_date = as.Date(start_date, format = "%m/%d/%Y")) #Turn starting dates into appropriate formats
+
+
+weather$date <- as.Date(weather$date, format="%m/%d/%Y") #Turn weather dates into appropriate formats
+
+joined_table <- inner_join(trip_for_weather, weather, by = c("start_date" = "date", "start_city" = "city")) #creating a new dataset combining trip data with the weather data using date and city columns
+
+#Data containing relevant weather measurements 
+joined_table2 <- select(joined_table, c(duration, max_temperature_f:cloud_cover)) 
+
+my_corr <- cor(joined_table2, use = "complete.obs")  #Matrix for finding correlation coefficients between duration and each of the weather measurements
+corrplot(my_corr, method = "number", tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.8) #no correlation for duration
+```
+
+
+
+
+
