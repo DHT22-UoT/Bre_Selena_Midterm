@@ -248,7 +248,7 @@ view(tripend)
 |Thursday|8-9AM|8-9AM|
 |Friday|8-9AM|8-9AM|
 
-### Task 5: Determine the 10 most frequent starting stations and ending stations during the rush hours you established. 
+### Task 5: Determine the 10 most frequent starting stations and ending stations during the rush hours you established 
 
 #### R script
 
@@ -289,7 +289,7 @@ top_10_end_stations <- sort(table(my_trip_copy$end_stations_rush), decreasing = 
 |9|Civic Center BART (7th at Market)|1123|Embarcadero at Sansome|1375|
 |10|South Van Ness at Market|1015|Embarcadero at Folsom|1207|
 
-### Task 6: Determine the 10 most frequent starting stations and ending stations during the weekends (more sophisticated method than Q5 but same goal).
+### Task 6: Determine the 10 most frequent starting stations and ending stations during the weekends (more sophisticated method than Q5 but same goal)
 
 #### R script
 
@@ -366,7 +366,7 @@ most_freq_end <- station_names_ordered2$station.name[1:10]
 |9|Powell at Post (Union Square)|1091|Grant Avenue at Columbus Avenue|1098|
 |10|Market at Sansome|1091|Market at Sansome|1098|
 
-### Task 7: Calculate the average utilization of bikes for each month (total time(duration) used/total time in month)
+### Task 7: Calculate the average utilization of bikes for each month
 
 #### R script
 
@@ -470,7 +470,7 @@ merged_table <- merged_table %>%
 |12|1226|
 
 
-### Task 8: Determine whether weather conditions have an impact on the bike rental patterns.
+### Task 8: Determine whether weather conditions have an impact on the bike rental patterns
 
 #### R script
 
