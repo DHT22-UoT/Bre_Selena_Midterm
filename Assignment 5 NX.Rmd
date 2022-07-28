@@ -86,8 +86,6 @@ weather.eda <- function(weather)
 weather.eda(weather)
 ```
 
-#### Report
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An exploratory data analysis of both the trips data set and weather data set were completed. The most frequently used starting and ending station is the San Francisco Caltrain station. The following most frequently used stations can be viewed in Figure 1 and 2. Descriptive statistics were viewed for numeric variables within the trips data set. Descriptions of the duration of customers and subscribers trips can be found in Table 1. 
 
 **Table 1.** Description of statistics for the duration of trips from the trips data set in seconds.
@@ -140,8 +138,6 @@ trip.clean <- trip %>%
 #One extremely large value in the duration column that needs to be removed 
 ```
 
-#### Report
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Any trips with a duration of less than 2 minutes (120 seconds) were considered as a canceled trip and were removed from the trips data set. This removed 2499 observations from the trips data set. 
 
 ### Task 3: Identifying any outliers in the weather data set
@@ -181,8 +177,6 @@ weather <- weather %>%
   filter(precipitation_inches < 1.38) %>%
   filter(cloud_cover < 8)
 ```
-
-#### Report
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;An extremely large value of 17270400 was observed in the durations column in the trips data set which was significantly larger than the rest of the values in the column leading to the removal of this specific value. To remove any outliers from the weather data set, any values within any numeric columns that were not within 99.9% of the data range were removed. This led to the removal of 522 observations from the weather data set.
 
@@ -234,8 +228,6 @@ view(tripend)
 #Friday: 8AM - 9AM has 6587 trips
 ```
 
-#### Report
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;After cleaning the data frames, rush hours during the weekdays were found where the trip volume was the highest at the starting and ending stations. The peak hours can be observed in Table 3. 
 
 **Table 3.** Weekdays with peak hours for highest trip volume. 
@@ -269,8 +261,6 @@ my_trip_copy <- trip.clean %>%
 top_10_start_stations <- sort(table(my_trip_copy$start_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) starting stations during rush hours on weekdays
 top_10_end_stations <- sort(table(my_trip_copy$end_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) ending stations during rush hours on weekdays
 ```
-
-#### Report
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Next, the 10 most frequent starting and ending stations during these rush hours can be found in Table 4. The stations were found by first keeping the trip data where the starting and ending days were weekdays, and then finding the starting and ending station names for the corresponding rush hours demonstrated in Table 3. Then, the starting and ending station names are put into individual tables and sorted according to their frequencies in a descending order. Lastly, the first 10 station names in the ordered table along with their frequencies were found and used to compute Table 4. The starting and ending stations with the highest frequencies during the rush hours on weekdays were San Francisco Caltrain (Townsend at 4th) and San Francisco Caltrain (Townsend at 4th), respectively.
 
@@ -344,8 +334,6 @@ station_names_ordered2 <- arrange(station_names, desc(station_names$end_station_
 # Obtain the 10 most frequent ending stations
 most_freq_end <- station_names_ordered2$station.name[1:10]
 ```
-
-#### Report
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The 10 most frequent starting and ending stations during the weekend can be found in Table 5. These stations were found by a similar method as the one for Table 4, but more sophisticated and less efficient. This is done by first keeping the trip data where the starting and ending days were weekends. Then, a copy of the station data with only the station name column was made. Two more columns were added to the copy, with each counting the number of times each starting and ending stations were used, respectively. Another copy of the station names was also made for looping.
 
@@ -442,8 +430,6 @@ merged_table <- merged_table %>%
             average_utilization_per_month = floor(utilization_per_month / total_number_of_times)) #Calculates the average utilization in each month
 ```
 
-#### Report
-
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The average utilization of bikes for each month can be found in Table 6. It should be noted that there were two assumptions made. One of them was that the average utilization of bikes for each month was interpreted as the total time(duration) used/total time (total number of times bikes were used) in month, so it means the average duration in seconds per bike rental in a month. The second one was that when the starting and ending months were not equal, the number of times the bikes were used was one in both the starting and ending months. 
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;First, the total utilization (duration) of bikes and the number of times bikes were used for each month, where the starting and ending months were equal, were found. The dataset analysis was separated according to whether the starting and ending months were equal or not, because if the starting and ending months were not equal, the duration needed to be divided into the corresponding months. 
@@ -491,8 +477,6 @@ joined_table2 <- select(joined_table, c(duration, max_temperature_f:cloud_cover)
 my_corr <- cor(joined_table2, use = "complete.obs")  #Matrix for finding correlation coefficients between duration and each of the weather measurements
 corrplot(my_corr, method = "number", tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.8) #no correlation for duration
 ```
-
-#### Report
 
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;To investigate on whether the weather conditions have an impact on the bike rental patterns, weather variables such as temperature, wind speed, gust speed, cloud cover, visibility were used to create a correlation matrix with the duration of bike rental trips, which can be seen in Figure 4. The highest correlations should be in dark blue or dark red colours. The matrix was created from the new dataset combining trip data with the weather data using the “city” and “date” columns. The correlation coefficients between duration and the weather variables can be seen in Table 7. The correlation coefficients were all close to zero in Table 7, and they were all transparent in Figure 4, which indicates that there was no correlation between bike rental duration and the weather variables.
 
