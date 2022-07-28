@@ -364,6 +364,18 @@ corrplot(my_corr, method = "number", tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.
 ```
 
 
+# Appendix 
 
+
+![Figure 1. Frequency of Starting Stations Used](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.1.png)
+
+
+![Figure 2. Frequency of Ending Stations Used](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.2.png)
+
+
+![Figure 3. Trip frequencies and their amount of Precipitation](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.3.png)
+
+
+![Figure 4. Correlation matrix plot showing relationship between bike rental duration and weather variables](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.4.png)
 
 
