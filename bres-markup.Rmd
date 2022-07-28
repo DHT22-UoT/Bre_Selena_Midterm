@@ -178,6 +178,7 @@ tripstart <- trip.clean %>%
   group_by(weekday, start.time) %>%
   summarise(cnt=n())
 
+#MIDTERM CHANGE - got rid of the "view" function on tripstart variable as it was unnecessary 
 tripstart #Each number of counts per hour are shown in this new data frame, so the rush hours are as follows:
 #Monday: 8AM - 9AM has 8162 trips 
 #Tuesday: 8AM - 9AM has 8849 trips
@@ -191,7 +192,7 @@ tripend <- trip.clean %>%
   filter(weekday == "Mon" | weekday == "Tue" | weekday == "Wed" | weekday == "Thu" | weekday == "Fri") %>%
   group_by(weekday, end.time) %>%
   summarise(cnt=n())
-tripend
+tripend #**MIDTERM CHANGE - got ride of the "view" function as it was unnecessary
 
 #Monday: 5PM - 6PM has 7920 trips 
 #Tuesday: 8AM - 9AM has 8271 trips
