@@ -75,7 +75,31 @@ weather.eda(weather)
 ```
 
 
+### Table 1. Description of statistics for the duration of trips from the trips data set in seconds
+
+```{r Table1, echo=FALSE}
+Trip.Data.Set <- c("Duration of Trip:")
+Mean. <- c(1131.97)
+IQR <- c(405)
+Standard.Deviation <- c(30816.16)
+Sample.size <- c(326339)
+table1 <- data.frame(Trip.Data.Set, Mean., IQR, Standard.Deviation, Sample.size)
+table1
+```
+
 The amount of precipitation for each event can be viewed in Figure 3. No precipitation occurred for 1542 trips out of the entire data set. Descriptive statistics of all numerical variables in the weather data set can be found in Table 2. 
+
+### Table 2.  Descriptive Statistics of Numeric Values from the Weather Data Set
+
+```{r Table2, echo=FALSE}
+Variable.Name <- c("max_temperature_f", "mean_temperature_f", "min_temperature_f", "max_visibility_miles", "mean_visibility_miles", "min_visibility_miles", "max_wind_Speed_mph", "mean_wind_speed_mph", "max_gust_speed_mph", "cloud_cover")
+Mean2 <- c(71.03,62.03,52.83,10.86,9.97,8.12,16.44,6.10,22.69,3.00)
+IQR2 <- c(12,11,10,0,0,3,7,4,7,4)
+Standard.Deviation2 <- c(8.26,6.75,6.67,2.62,1.62,3.04,7.32,3.05,9.09,2.30)
+table2 <- data.frame(Variable.Name, Mean2, IQR2, Standard.Deviation2)
+table2
+```
+
 
 ## Outliers 
 
@@ -130,6 +154,7 @@ weather <- weather %>%
 
 After cleaning the data frames, rush hours during the weekdays were found where the trip volume was the highest at the starting and ending stations. The peak hours can be observed in Table 1.0. Weekdays with peak hours for highest trip volume. 
 
+
 ```{r Weekday_Rush_Hours}
 #Task 4:
 #Find the highest volume of hours on weekdays; find the hours of weekdays where the trip volume is highest:
@@ -177,6 +202,17 @@ tripend
 ```
 
 
+## Table 1.0 Weekdays with peak hours for highest trip volume
+
+
+```{R Table 1.0, echo=FALSE}
+Week.day <- c("monday", "tuesday", "wednesday", "thursday", "friday")
+start.station.peak.hours <- c("8-9AM", "8-9AM", "8-9AM", "8-9AM", "8-9AM")
+end.station.peak.hours <- c("5-6PM", "8-9AM", "8-9AM", "8-9AM", "8-9AM")
+Table1.0 <- data.frame(Week.day, start.station.peak.hours, end.station.peak.hours)
+Table1.0
+```
+
 
 Next, the 10 most frequent starting and ending stations during these rush hours can be found in Table 1.1. The stations were found by first keeping the trip data where the starting and ending days were weekdays, and then finding the starting and ending station names for the corresponding rush hours demonstrated in Table 1.0. Then, the starting and ending station names are put into individual tables and sorted according to their frequencies in a descending order. Lastly, the first 10 station names in the ordered table along with their frequencies were found and used to compute Table 1.1. The starting and ending stations with the highest frequencies during the rush hours on weekdays were San Francisco Caltrain (Townsend at 4th) and San Francisco Caltrain (Townsend at 4th), respectively.
 
@@ -198,6 +234,20 @@ my_trip_copy <- trip.clean %>%
 
 top_10_start_stations <- sort(table(my_trip_copy$start_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) starting stations during rush hours on weekdays
 top_10_end_stations <- sort(table(my_trip_copy$end_stations_rush), decreasing = T)[1:10] #Obtain top 10 (most frequent) ending stations during rush hours on weekdays
+```
+
+
+## Table 1.1 Ten most frequent starting and ending stations during the rush hours on weekdays
+
+
+```{r Table_1.1, echo=FALSE}
+Ranking <- c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
+start.station.name <- c("San Francisco Caltrain (Townsend at 4th", "Harry Bridges Plaza (Ferry Building)", "San Francisco Caltrain 2 (330 Townsend)", "Temporary Transbay Terminal(Howard at Beale)", "Steuart at Market", "Grant Avenue at Columbus Avenue", "2nd at Townsend", "Embarcadero at Bryant", "Civic Center BART (7th at Market)", "South Van Ness at Market")
+start.station.frq <- c(6143, 3476, 3398, 3135, 1934, 1620, 1297, 1128, 1123, 1015)
+end.station.name <- c("San Francisco Caltrain (Townsend at 4th)", "Market at Sansome", "San Francisco Caltrain 2 (330 Townsend)", "2nd at Townsend", "Townsend at 7th", "Steuart at Market", "Harry Bridges Plaza (Ferry Building)", "Temporary Transbay Terminal (Howard at Beale)", "Embarcadero at Sansome", "Embarcadero at Folsom")
+end.station.frq <- c(4292, 2070, 1798, 1796, 1784, 1506, 1463, 1425, 1375, 1207)
+Table1.1 <- data.frame(Ranking, start.station.name, start.station.frq, end.station.name, end.station.frq)
+Table1.1
 ```
 
 
@@ -256,6 +306,19 @@ most_freq_start <- station_names_ordered$station.name[1:10]
 station_names_ordered2 <- arrange(station_names, desc(station_names$end_station_count))
 # Obtain the 10 most frequent ending stations
 most_freq_end <- station_names_ordered2$station.name[1:10]
+```
+
+
+## Table 1.2 Ten most frequent starting and ending stations during the weekends
+
+```{R Table 1.2}
+ranking2 <- c(1,2,3,4,5,6,7,8,9,10)
+start.station.name2 <- c("Harry Bridges Plaza (Ferry Building)", "Embarcadero at Sansome", "Market at 4th", "Embarcadero at Bryant", "2nd at Townsend", "Powell Street BART", "San Francisco Caltrain (Townsend at 4th)", "Grant Avenue at Columbus Avenue", "Powell at Post (Union Square)", "Market at Sansome")
+start.station.frq2 <- c(3169,3128,1661,1591,1546,1488,1365,1299,1091,1091)
+end.station.name2 <- c("Embarcadero at Sansome", "Harry Bridges Plaza (Ferry Building)", "Market at 4th", "Powell Street BART", "San Francisco Caltrain (Townsend at 4th)", "2nd at Townsend", "Embarcadero at Bryant", "Steuart at Market", "Grant Avenue at Columbus Avenue", "Market at Sansome")
+end.station.frq2 <- c(3376,3175,1871,1675,1653,1584,1354,1213,1098,1098)
+table1.2 <- data.frame(ranking2,start.station.name2, start.station.frq2, end.station.name2, end.station.frq2)
+table1.2
 ```
 
 
@@ -341,6 +404,16 @@ merged_table <- merged_table %>%
 ```
 
 
+## Table 1.3 Average utilization of bikes for each month
+
+```{R Table 1.3, echo=FALSE}
+month1 <- c(1,2,3,4,5,6,7,8,9,10,11,12)
+avg.use.bike <- c(1016,1044,1159,1117,1134,1150,1128,1153,1049,970,911,1226)
+table1.3 <- data.frame(month1,avg.use.bike)
+table1.3
+```
+
+
 To investigate on whether the weather conditions have an impact on the bike rental patterns, weather variables such as temperature, wind speed, gust speed, cloud cover, visibility were used to create a correlation matrix with the duration of bike rental trips, which can be seen in Figure 4. The highest correlations should be in dark blue or dark red colours. The matrix was created from the new dataset combining trip data with the weather data using the “city” and “date” columns. The correlation coefficients between duration and the weather variables can be seen in Table 1.4. The correlation coefficients were all close to zero in Table 1.4, and they were all transparent in Figure 4, which indicates that there was no correlation between bike rental duration and the weather variables.
 
 
@@ -361,6 +434,16 @@ joined_table2 <- select(joined_table, c(duration, max_temperature_f:cloud_cover)
 
 my_corr <- cor(joined_table2, use = "complete.obs")  #Matrix for finding correlation coefficients between duration and each of the weather measurements
 corrplot(my_corr, method = "number", tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.8) #no correlation for duration
+```
+
+
+## Table 1.4. Correlation coefficients showing relationship between bike rental duration and weather variables
+ 
+```{R Table 1.4, echo=FALSE}
+weather.variables <- c("Max Temperature (F)", "Mean Temperature (F)", "Min Temperature (F)", "Max Visibility (miles)", "Mean Visibility (miles)", "Min Visibility (miles)", "Max Wind Speed (mph)", "Mean Wind Speed (mph)", "Max Gust Speed (mph)", "Precipitation (inches)", "Cloud Cover")
+correlation.coeff <- c(0.0011, -0.0011, -0.0028, 0.0059, 0.0055, 0.0065, -0.0054, -0.0044, -0.0084, 0.0011, -0.0152)
+table1.4 <- data.frame(weather.variables,correlation.coeff)
+table1.4
 ```
 
 
