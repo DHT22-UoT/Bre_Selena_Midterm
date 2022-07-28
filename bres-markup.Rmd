@@ -1,0 +1,38 @@
+---
+title: "breannas.markup"
+author: "BV"
+date: "2022-07-28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Data from the Bay Area Bike Operations was collected over 12 months in the year 2014. Information about the bike trips, weather, and bike stations were collected and organized into three separate data frames. All figures throughout this report can be referred to in the Appendix section.
+
+# Preliminary Data
+
+
+```{r variable_assignments, eval=FALSE, include=TRUE}
+library(readr)
+library(dplyr)
+library(tidyr)
+trip <- read_csv("~/Desktop/trip.csv")
+weather <- read_csv("~/Desktop/weather.csv")
+station <- read_csv("~/Desktop/station.csv")
+```
+
+
+```{r data manipulation, include=FALSE}
+
+station_names <- data.frame(station$name)
+#Create 2 columns, all zeros, for the starting counts (0's) to assist later counting the starting and ending stations
+name_count_start <- rep(0, times = nrow(station_names))
+name_count_end <- rep(0, times = nrow(station_names))
+#Obtain the station names column in the station file for looping later
+name_col <- station_names$station.name
+#Create 2 columns in the station.csv data for counting the starting and ending stations based on the trip.csv data
+station_names$start_station_count <- name_count_start
+station_names$end_station_count <- name_count_end
+```
