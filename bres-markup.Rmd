@@ -463,17 +463,19 @@ table1.4
 # Appendix 
 
 
-#![Figure 1. Frequency of Starting Stations Used]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.1.png)
+![Figure 1. Frequency of Starting Stations Used](/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.1.png)
 
 
-#![Figure 2. Frequency of Ending Stations Used]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.2.png)
+![Figure 2. Frequency of Ending Stations Used](/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.2.png)
 
 
-#![Figure 3. Trip frequencies and their amount of Precipitation]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.3.png)
+![Figure 3. Trip frequencies and their amount of Precipitation](/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.3.png)
 
 
-#![Figure 4. Correlation matrix plot showing relationship between bike rental duration and weather variables]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.4.png)
+![Figure 4. Correlation matrix plot showing relationship between bike rental duration and weather variables](/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.4.png)
 
 ```{r review_comment, include = FALSE}
-# Ashley: Overall, report is well organized - the code chunks are easy to follow and section headers make the report well organized and easy to follow as well. One suggestion is to try to avoid hard-coding values, it is best to try to calculate values within the code in case anything changes to the code.
+# Ashley: Overall, report is well organized - the code chunks are easy to follow and section headers make the report well organized and easy to follow as well. One suggestion is to try to avoid hard-coding values, it is best to try to calculate values within the code in case anything changes to the code. The code was well commented, it was very easy to follow your code and also the report was very readable. It was easy to follow each of the code chunks and their outputs. I was able to knit without any errors, all necessary packages were explicitly loaded, document is appropriately formatted using headers and text, code outputs are properly formatted for printing/viewing. Outputs are disabled for appropriate chunks, and lastly, code is chunked appropriately, code chunks are named and options sets where necessary and code is commented.
+
+# GRADE: 10/10 
 ```
