@@ -18,9 +18,9 @@ library(tidyr)
 ```
 
 ```{r importing.datasets, results='hide'}
-trip <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/trip.csv")
-weather <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/weather.csv")
-station <- read_csv("/Users/bre/Desktop/Bre_Selena_Midterm/station.csv")
+trip <- read_csv("/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/babs/trip.csv")
+weather <- read_csv("/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/babs/weather.csv")
+station <- read_csv("/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/babs/station.csv")
 ```
 
 
@@ -48,6 +48,10 @@ An exploratory data analysis of both the trips data set and weather data set wer
 library(funModeling)
 library(tidyverse)
 library(Hmisc)
+
+#' Ashley: You could instead create one function and have it take as input the weather or trip data and then make two calls
+#' to the function where trip is input in one call and then weather is input in one call. That way you don't have to write code
+#' for the same function twice. 
 
 Trip.eda <- function(trip)
 {
@@ -78,6 +82,8 @@ weather.eda(weather)
 
 ```{r Table1, echo=FALSE}
 Trip.Data.Set <- c("Duration of Trip:")
+
+# Ashley: instead of hard-coding the the values here, try calculating these within the code. 
 Mean. <- c(1131.97)
 IQR <- c(405)
 Standard.Deviation <- c(30816.16)
@@ -92,6 +98,8 @@ The amount of precipitation for each event can be viewed in Figure 3. No precipi
 
 ```{r Table2, echo=FALSE}
 Variable.Name <- c("max_temperature_f", "mean_temperature_f", "min_temperature_f", "max_visibility_miles", "mean_visibility_miles", "min_visibility_miles", "max_wind_Speed_mph", "mean_wind_speed_mph", "max_gust_speed_mph", "cloud_cover")
+
+# Ashley: try to avoid hard-coding any numbers where you can 
 Mean2 <- c(71.03,62.03,52.83,10.86,9.97,8.12,16.44,6.10,22.69,3.00)
 IQR2 <- c(12,11,10,0,0,3,7,4,7,4)
 Standard.Deviation2 <- c(8.26,6.75,6.67,2.62,1.62,3.04,7.32,3.05,9.09,2.30)
@@ -157,6 +165,9 @@ After cleaning the data frames, rush hours during the weekdays were found where 
 ```{r Weekday_Rush_Hours, results='hide'}
 #Task 4:
 #Find the highest volume of hours on weekdays; find the hours of weekdays where the trip volume is highest:
+
+# Ashley: it is best to load all required packages at the beginning of the code for better readability 
+
 library(lubridate)
 #Change the type for start and end date from character to date and time
 trip.clean$start_date <- mdy_hm(trip.clean$start_date)
@@ -433,6 +444,8 @@ joined_table <- inner_join(trip_for_weather, weather, by = c("start_date" = "dat
 joined_table2 <- select(joined_table, c(duration, max_temperature_f:cloud_cover)) 
 
 my_corr <- cor(joined_table2, use = "complete.obs")  #Matrix for finding correlation coefficients between duration and each of the weather measurements
+
+# Ashley: could add a figure caption for the plot 
 corrplot(my_corr, method = "number", tl.cex = 0.8, cl.cex = 0.8, number.cex = 0.8) #no correlation for duration
 ```
 
@@ -450,15 +463,17 @@ table1.4
 # Appendix 
 
 
-![Figure 1. Frequency of Starting Stations Used](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.1.png)
+#![Figure 1. Frequency of Starting Stations Used]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.1.png)
 
 
-![Figure 2. Frequency of Ending Stations Used](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.2.png)
+#![Figure 2. Frequency of Ending Stations Used]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.2.png)
 
 
-![Figure 3. Trip frequencies and their amount of Precipitation](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.3.png)
+#![Figure 3. Trip frequencies and their amount of Precipitation]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.3.png)
 
 
-![Figure 4. Correlation matrix plot showing relationship between bike rental duration and weather variables](/Users/bre/Desktop/Bre_Selena_Midterm/Fig.4.png)
+#![Figure 4. Correlation matrix plot showing relationship between bike rental duration and weather variables]#(/Users/AshleyNamini/Documents/MBiotech/MSC2011/Assignments/Fig.4.png)
 
-
+```{r review_comment, include = FALSE}
+# Ashley: Overall, report is well organized - the code chunks are easy to follow and section headers make the report well organized and easy to follow as well. One suggestion is to try to avoid hard-coding values, it is best to try to calculate values within the code in case anything changes to the code.
+```
